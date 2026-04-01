@@ -1654,14 +1654,13 @@ FRIDGESECTION =
 (
 RegRead, OldFontSize, HKEY_CURRENT_USER\Software\Microsoft\Notepad , iPointSize
 
-RegWrite, REG_DWORD, HKEY_CURRENT_USER\Software\Microsoft\Notepad, iPointSize, 100
-
 FormatTime, FridgeTime,FridgeTime, dd/MM/yyyy
 
 FridgeMSG := patientdata2 " " patientdata1 "``n``nFridge - " FridgeTime "``n``n"
 
 If CompleteRecordDetails contains insulin,erythropoietin,adalimumab,somatropin,etanercept,glucagon,interferon,ALPHACALCIDOL 2MCG
 {
+RegWrite, REG_DWORD, HKEY_CURRENT_USER\Software\Microsoft\Notepad, iPointSize, 100
 FridgeMSG .= 
 
 Loop, Parse, CompleteRecordDetails, ``n
@@ -1722,6 +1721,9 @@ FileAppend, `%FridgeMSG`%, C:\AHK\FridgeWarning.txt
 	if !SafePrintTextFile("C:\AHK\FridgeWarning.txt")
 	    LogFailure("Print failed: C:\AHK\FridgeWarning.txt")
 }
+
+; Restore font size after fridge label printing (was set to 100 for small fridge labels)
+RegWrite, REG_DWORD, HKEY_CURRENT_USER\Software\Microsoft\Notepad, iPointSize, `%OldFontSize`%
 )
 	
 DDASECTION =
