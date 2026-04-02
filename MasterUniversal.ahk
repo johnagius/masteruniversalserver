@@ -2138,17 +2138,17 @@ if !pTransGrid {
     GoTo, SkipAutoFill
 }
 
-; ---- Fetch rounding rules (cached, re-fetched every 12 hours) ----
-_roundingCache := "C:\AHK\RoundingRulesCache.ini"
+; ---- Fetch rounding rules (cached 12h, plain text file to preserve = signs and newlines) ----
+_roundingCacheFile := "C:\AHK\RoundingRulesCache.txt"
+_roundingCacheTime := "C:\AHK\RoundingRulesCacheTime.ini"
 _needFetch := true
-IniRead, _cachedTime, %_roundingCache%, Cache, FetchTime, 0
+IniRead, _cachedTime, %_roundingCacheTime%, Cache, FetchTime, 0
 if (_cachedTime != 0) {
     _age := A_Now
     EnvSub, _age, %_cachedTime%, Hours
     if (_age < 12) {
-        ; Cache is fresh — read from file instead of HTTP
-        IniRead, RoundingRules, %_roundingCache%, Cache, Rules
-        if (RoundingRules != "" && RoundingRules != "ERROR")
+        FileRead, RoundingRules, %_roundingCacheFile%
+        if (RoundingRules != "")
             _needFetch := false
     }
 }
@@ -2158,9 +2158,12 @@ if (_needFetch) {
     HttpRequest.Open("GET", url)
     HttpRequest.Send()
     RoundingRules := HttpRequest.ResponseText
-    ; Save to cache
-    IniWrite, %A_Now%, %_roundingCache%, Cache, FetchTime
-    IniWrite, %RoundingRules%, %_roundingCache%, Cache, Rules
+    ; Save to cache (plain text file preserves = signs and newlines)
+    if (RoundingRules != "") {
+        IniWrite, %A_Now%, %_roundingCacheTime%, Cache, FetchTime
+        FileDelete, %_roundingCacheFile%
+        FileAppend, %RoundingRules%, %_roundingCacheFile%
+    }
 }
 
 FoundPos := RegExMatch(RoundingRules,"roundeduplist \= (.*)", RoundedUpList)
