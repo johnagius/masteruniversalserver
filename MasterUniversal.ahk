@@ -2087,7 +2087,7 @@ if pPatGrid {
     UIA_Release(pPatGrid)
     patientdata1 := patData.ID
     patientdata2 := patData.Name
-    patientbirthday1 := RegExReplace(patData.DOB, "\s+\d{2}:\d{2}:\d{2}$", "")
+    patientbirthday1 := RegExReplace(patData.DOB, "\s+\d{1,2}:\d{2}:\d{2}.*", "")
     patientaddress1 := patData.Address
     ; Build fullpatientdata for backward compat with any code that uses it
     fullpatientdata := "ID " patData.ID " Name " patData.Name " Address " patData.Address " Date Of Birth " patData.DOB
@@ -2555,7 +2555,7 @@ if pPatGrid {
     UIA_Release(pPatGrid)
     patientdata1 := patData.ID
     patientdata2 := patData.Name
-    patientbirthday1 := RegExReplace(patData.DOB, "\s+\d{2}:\d{2}:\d{2}$", "")
+    patientbirthday1 := RegExReplace(patData.DOB, "\s+\d{1,2}:\d{2}:\d{2}.*", "")
     patientaddress1 := patData.Address
     fullpatientdata := "ID " patData.ID " Name " patData.Name " Address " patData.Address " Date Of Birth " patData.DOB
 }
